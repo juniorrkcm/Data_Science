@@ -39,6 +39,11 @@
       height: 100%;
     }
 
+    .loading {
+      opacity: 0.6;
+      pointer-events: none;
+    }
+
     .formulario {
       border-right: 2px solid #eee;
     }
@@ -217,7 +222,7 @@
           </select>
         </div>
 
-        <button type="button" onclick="enviarDados()">Enviar</button>
+        <button type="button" id="enviarBtn" onclick="enviarDados()">Enviar</button>
       </form>
     </div>
 
@@ -232,36 +237,51 @@
 
   <script>
     function enviarDados() {
-      const dados = {
-        genero: document.querySelector('input[name="genero"]:checked')?.value,
-        idade: parseInt(document.getElementById("idade").value),
-        hipertensao: parseInt(document.querySelector('input[name="hipertensao"]:checked')?.value),
-        doenca_cardiaca: parseInt(document.querySelector('input[name="doenca_cardiaca"]:checked')?.value),
-        casado: document.querySelector('input[name="casado"]:checked')?.value,
-        tipo_trabalho: document.getElementById("tipo_trabalho").value,
-        tipo_residencia: document.getElementById("tipo_residencia").value,
-        glicose: parseFloat(document.getElementById("glicose").value),
-        imc: parseFloat(document.getElementById("imc").value),
-        fumante: document.getElementById("fumante").value
-      };
+  const botao = document.getElementById("enviarBtn");
+  const resultadoBox = document.getElementById("resultado-box");
 
-      fetch("https://api-avc.onrender.com/predict", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(dados)
-      })
-      .then(response => response.json())
-      .then(data => {
-        const recomendacaoFormatada = data.recomendacao.replace(/(\r\n|\n|\r)/gm, "\n\n");
-        document.getElementById("resultado-box").innerText =
-          "🧠 Possibilidade de AVC: " + data.predicao + "\n\n" +
-          "📋 Recomendações:\n\n" + recomendacaoFormatada;
-      })
-      .catch(error => {
-        document.getElementById("resultado-box").innerText = "Erro ao processar a requisição.";
-        console.error("Erro:", error);
-      });
-    }
+  // Exibir mensagem de carregamento
+  resultadoBox.innerText = "⏳ Processando...";
+  resultadoBox.classList.add("loading");
+  botao.disabled = true;
+  botao.innerText = "Enviando...";
+
+  const dados = {
+    genero: document.querySelector('input[name="genero"]:checked')?.value,
+    idade: parseInt(document.getElementById("idade").value),
+    hipertensao: parseInt(document.querySelector('input[name="hipertensao"]:checked')?.value),
+    doenca_cardiaca: parseInt(document.querySelector('input[name="doenca_cardiaca"]:checked')?.value),
+    casado: document.querySelector('input[name="casado"]:checked')?.value,
+    tipo_trabalho: document.getElementById("tipo_trabalho").value,
+    tipo_residencia: document.getElementById("tipo_residencia").value,
+    glicose: parseFloat(document.getElementById("glicose").value),
+    imc: parseFloat(document.getElementById("imc").value),
+    fumante: document.getElementById("fumante").value
+  };
+
+  fetch("https://api-avc.onrender.com/predict", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(dados)
+  })
+  .then(response => response.json())
+  .then(data => {
+    const recomendacaoFormatada = data.recomendacao.replace(/(\r\n|\n|\r)/gm, "\n\n");
+    resultadoBox.innerText =
+      "🧠 Possibilidade de AVC: " + data.predicao + "\n\n" +
+      "📋 Recomendações:\n\n" + recomendacaoFormatada;
+  })
+  .catch(error => {
+    resultadoBox.innerText = "❌ Erro ao processar a requisição. Tente novamente.";
+    console.error("Erro:", error);
+  })
+  .finally(() => {
+    botao.disabled = false;
+    botao.innerText = "Enviar";
+    resultadoBox.classList.remove("loading");
+  });
+}
+
   </script>
 </body>
 </html>
