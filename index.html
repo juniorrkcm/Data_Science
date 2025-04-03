@@ -13,29 +13,30 @@
       background-color: #ffffff;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       margin: 0;
-      padding: 20px 0;
+      padding: 0;
       display: flex;
       justify-content: center;
-      align-items: flex-start;
+      align-items: center;
       height: 100vh;
     }
 
     .container {
+      width: 1162px;
+      height: 592px;
       display: flex;
-      flex-direction: row;
-      width: 95%;
-      max-width: 1100px;
-      max-height: 90vh;
-      overflow-y: auto;
       background: white;
       border-radius: 16px;
       box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
       border: 2px solid #9F2B2B;
+      overflow: hidden;
     }
 
     .formulario, .resultado {
       flex: 1;
-      padding: 20px 25px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
     }
 
     .formulario {
@@ -44,74 +45,86 @@
 
     h2 {
       color: #9F2B2B;
-      margin-bottom: 15px;
-      font-size: 22px;
+      font-size: 20px;
+      margin: 0 0 16px 0;
       text-align: center;
+    }
+
+    form {
+      flex: 1;
+      overflow-y: auto;
+      padding-right: 10px;
     }
 
     .form-group {
       display: flex;
       flex-direction: column;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
     }
 
     .form-group label {
+      font-size: 14px;
+      margin-bottom: 4px;
       font-weight: 600;
-      margin-bottom: 5px;
-      color: #333;
     }
 
     input[type="number"],
     select {
-      padding: 8px;
+      padding: 6px;
+      font-size: 14px;
       border: 1px solid #ccc;
-      border-radius: 8px;
-      font-size: 15px;
+      border-radius: 6px;
     }
 
     .radio-group {
       display: flex;
-      flex-wrap: wrap;
       gap: 12px;
+      flex-wrap: wrap;
     }
 
     .radio-group label {
       font-weight: normal;
-      color: #444;
+      font-size: 14px;
     }
 
     button {
       background-color: #9F2B2B;
       color: white;
       padding: 10px;
+      font-size: 15px;
       border: none;
+      border-radius: 8px;
       cursor: pointer;
-      width: 100%;
-      font-size: 16px;
-      border-radius: 10px;
+      margin-top: 10px;
       transition: background-color 0.3s ease;
-      margin-top: 15px;
     }
 
     button:hover {
       background-color: #7d2222;
     }
 
-    #resultado {
-      font-size: 16px;
+    .resultado {
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    #resultado-box {
+      max-width: 90%;
+      background-color: #f9f9f9;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      padding: 15px;
+      font-size: 15px;
       color: #333;
       white-space: pre-line;
-      margin-top: 10px;
-      padding: 12px;
-      background-color: #f9f9f9;
-      border-radius: 10px;
-      border: 1px solid #ccc;
     }
 
     @media (max-width: 768px) {
       .container {
         flex-direction: column;
-        max-height: none;
+        height: auto;
+        width: 95%;
       }
 
       .formulario {
@@ -123,7 +136,7 @@
 </head>
 <body>
   <div class="container">
-    <!-- Coluna esquerda: Formulário -->
+    <!-- Lado esquerdo: Formulário -->
     <div class="formulario">
       <h2>Formulário de Predição de AVC</h2>
       <form id="formulario">
@@ -206,10 +219,12 @@
       </form>
     </div>
 
-    <!-- Coluna direita: Resultado -->
+    <!-- Lado direito: Resultado -->
     <div class="resultado">
-      <h2>Resultado</h2>
-      <div id="resultado">Aguardando dados...</div>
+      <div>
+        <h2>Resultado</h2>
+        <div id="resultado-box">Aguardando dados...</div>
+      </div>
     </div>
   </div>
 
@@ -236,12 +251,12 @@
       .then(response => response.json())
       .then(data => {
         const recomendacaoFormatada = data.recomendacao.replace(/(\r\n|\n|\r)/gm, "\n\n");
-        document.getElementById("resultado").innerText =
+        document.getElementById("resultado-box").innerText =
           "🧠 Possibilidade de AVC: " + data.predicao + "\n\n" +
           "📋 Recomendações:\n\n" + recomendacaoFormatada;
       })
       .catch(error => {
-        document.getElementById("resultado").innerText = "Erro ao processar a requisição.";
+        document.getElementById("resultado-box").innerText = "Erro ao processar a requisição.";
         console.error("Erro:", error);
       });
     }
