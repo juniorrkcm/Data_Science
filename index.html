@@ -5,99 +5,125 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Formulário de Predição de AVC</title>
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
-      font-family: Arial, sans-serif;
-      background-color: #f4f6f9;
+      background-color: #ffffff;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       margin: 0;
-      padding: 0;
+      padding: 20px 0;
       display: flex;
       justify-content: center;
-      align-items: center;
+      align-items: flex-start;
       height: 100vh;
     }
 
     .container {
       display: flex;
-      width: 80%;
-      max-width: 1000px;
+      flex-direction: row;
+      width: 95%;
+      max-width: 1100px;
+      max-height: 90vh;
+      overflow-y: auto;
       background: white;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+      border-radius: 16px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+      border: 2px solid #9F2B2B;
+    }
+
+    .formulario, .resultado {
+      flex: 1;
+      padding: 20px 25px;
     }
 
     .formulario {
-      flex: 1;
-      padding: 20px;
-      border-right: 2px solid #ddd;
-    }
-
-    .resultado {
-      flex: 1;
-      padding: 20px;
-      text-align: justify; /* Justifica o texto nesta coluna */
+      border-right: 2px solid #eee;
     }
 
     h2 {
-      color: #004080;
+      color: #9F2B2B;
+      margin-bottom: 15px;
+      font-size: 22px;
+      text-align: center;
     }
 
     .form-group {
       display: flex;
-      align-items: center;
-      margin-bottom: 15px;
+      flex-direction: column;
+      margin-bottom: 12px;
     }
 
     .form-group label {
-      width: 150px;
-      font-weight: bold;
+      font-weight: 600;
+      margin-bottom: 5px;
       color: #333;
-      margin-right: 10px;
     }
 
-    .form-group input[type="number"],
-    .form-group select {
-      flex: 1;
+    input[type="number"],
+    select {
       padding: 8px;
       border: 1px solid #ccc;
-      border-radius: 5px;
+      border-radius: 8px;
+      font-size: 15px;
     }
 
     .radio-group {
       display: flex;
-      align-items: center;
-      gap: 10px;
+      flex-wrap: wrap;
+      gap: 12px;
     }
 
     .radio-group label {
-      margin: 0;
+      font-weight: normal;
+      color: #444;
     }
 
     button {
-      background-color: #ff6600;
+      background-color: #9F2B2B;
       color: white;
       padding: 10px;
       border: none;
       cursor: pointer;
       width: 100%;
       font-size: 16px;
-      border-radius: 5px;
+      border-radius: 10px;
+      transition: background-color 0.3s ease;
+      margin-top: 15px;
     }
 
     button:hover {
-      background-color: #e65c00;
+      background-color: #7d2222;
     }
 
     #resultado {
-      margin-top: 20px;
-      font-weight: bold;
-      color: #004080;
+      font-size: 16px;
+      color: #333;
+      white-space: pre-line;
+      margin-top: 10px;
+      padding: 12px;
+      background-color: #f9f9f9;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        flex-direction: column;
+        max-height: none;
+      }
+
+      .formulario {
+        border-right: none;
+        border-bottom: 2px solid #eee;
+      }
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <!-- Formulário à Esquerda -->
+    <!-- Coluna esquerda: Formulário -->
     <div class="formulario">
       <h2>Formulário de Predição de AVC</h2>
       <form id="formulario">
@@ -173,6 +199,7 @@
             <option value="Nunca fumou">Nunca fumou</option>
             <option value="Fumou">Fumou</option>
             <option value="Fuma">Fuma</option>
+            <option value="Desconhecido">Desconhecido</option>
           </select>
         </div>
 
@@ -180,7 +207,7 @@
       </form>
     </div>
 
-    <!-- Resultado à Direita -->
+    <!-- Coluna direita: Resultado -->
     <div class="resultado">
       <h2>Resultado</h2>
       <div id="resultado">Aguardando dados...</div>
@@ -189,20 +216,18 @@
 
   <script>
     function enviarDados() {
-      var dados = {
-        genero: document.querySelector('input[name="genero"]:checked').value,
+      const dados = {
+        genero: document.querySelector('input[name="genero"]:checked')?.value,
         idade: parseInt(document.getElementById("idade").value),
-        hipertensao: parseInt(document.querySelector('input[name="hipertensao"]:checked').value),
-        doenca_cardiaca: parseInt(document.querySelector('input[name="doenca_cardiaca"]:checked').value),
-        casado: document.querySelector('input[name="casado"]:checked').value,
+        hipertensao: parseInt(document.querySelector('input[name="hipertensao"]:checked')?.value),
+        doenca_cardiaca: parseInt(document.querySelector('input[name="doenca_cardiaca"]:checked')?.value),
+        casado: document.querySelector('input[name="casado"]:checked')?.value,
         tipo_trabalho: document.getElementById("tipo_trabalho").value,
         tipo_residencia: document.getElementById("tipo_residencia").value,
         glicose: parseFloat(document.getElementById("glicose").value),
         imc: parseFloat(document.getElementById("imc").value),
         fumante: document.getElementById("fumante").value
       };
-
-      console.log("Dados enviados para a API:", dados);
 
       fetch("https://api-avc.onrender.com/predict", {
         method: "POST",
@@ -211,18 +236,14 @@
       })
       .then(response => response.json())
       .then(data => {
-        console.log("Resposta da API:", data);
-
-        // Substitui quebras de linha por <br> na string de recomendação
-        const recomendacaoFormatada = data.recomendacao.replace(/(\r\n|\n|\r)/gm, "<br><br>");
-
-        document.getElementById("resultado").innerHTML =
-          "<b>Possibilidade de AVC:</b> " + data.predicao + "<br><br>" +
-          "<b>Recomendações:</b><br><br>" + recomendacaoFormatada;
+        const recomendacaoFormatada = data.recomendacao.replace(/(\r\n|\n|\r)/gm, "\n\n");
+        document.getElementById("resultado").innerText =
+          "🧠 Possibilidade de AVC: " + data.predicao + "\n\n" +
+          "📋 Recomendações:\n\n" + recomendacaoFormatada;
       })
       .catch(error => {
-        document.getElementById("resultado").innerHTML = "Erro ao processar a requisição.";
-        console.error("Erro na requisição:", error);
+        document.getElementById("resultado").innerText = "Erro ao processar a requisição.";
+        console.error("Erro:", error);
       });
     }
   </script>
