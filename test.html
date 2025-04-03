@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Formulário de Predição de AVC</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f6f9;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .container {
+      display: flex;
+      width: 80%;
+      max-width: 1000px;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .formulario {
+      flex: 1;
+      padding: 20px;
+      border-right: 2px solid #ddd;
+    }
+
+    .resultado {
+      flex: 1;
+      padding: 20px;
+      text-align: justify; /* Justifica o texto nesta coluna */
+    }
+
+    h2 {
+      color: #004080;
+    }
+
+    .form-group {
+      display: flex;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+
+    .form-group label {
+      width: 150px;
+      font-weight: bold;
+      color: #333;
+      margin-right: 10px;
+    }
+
+    .form-group input[type="number"],
+    .form-group select {
+      flex: 1;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    .radio-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .radio-group label {
+      margin: 0;
+    }
+
+    button {
+      background-color: #ff6600;
+      color: white;
+      padding: 10px;
+      border: none;
+      cursor: pointer;
+      width: 100%;
+      font-size: 16px;
+      border-radius: 5px;
+    }
+
+    button:hover {
+      background-color: #e65c00;
+    }
+
+    #resultado {
+      margin-top: 20px;
+      font-weight: bold;
+      color: #004080;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Formulário à Esquerda -->
+    <div class="formulario">
+      <h2>Formulário de Predição de AVC</h2>
+      <form id="formulario">
+        <div class="form-group">
+          <label>Gênero:</label>
+          <div class="radio-group">
+            <label><input type="radio" name="genero" value="Masculino"> Masculino</label>
+            <label><input type="radio" name="genero" value="Feminino"> Feminino</label>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Idade:</label>
+          <input type="number" id="idade" min="0" max="120">
+        </div>
+
+        <div class="form-group">
+          <label>Hipertensão:</label>
+          <div class="radio-group">
+            <label><input type="radio" name="hipertensao" value="1"> Sim</label>
+            <label><input type="radio" name="hipertensao" value="0"> Não</label>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Doença Cardíaca:</label>
+          <div class="radio-group">
+            <label><input type="radio" name="doenca_cardiaca" value="1"> Sim</label>
+            <label><input type="radio" name="doenca_cardiaca" value="0"> Não</label>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Casado:</label>
+          <div class="radio-group">
+            <label><input type="radio" name="casado" value="Sim"> Sim</label>
+            <label><input type="radio" name="casado" value="Não"> Não</label>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Tipo de Trabalho:</label>
+          <select id="tipo_trabalho">
+            <option value="Crianças">Crianças</option>
+            <option value="Emprego Governamental">Emprego Governamental</option>
+            <option value="Nunca Trabalhou">Nunca Trabalhou</option>
+            <option value="Privado">Privado</option>
+            <option value="Autônomo">Autônomo</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Tipo de Residência:</label>
+          <select id="tipo_residencia">
+            <option value="Rural">Rural</option>
+            <option value="Urbano">Urbano</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Nível de Glicose:</label>
+          <input type="number" id="glicose" min="0" step="0.1">
+        </div>
+
+        <div class="form-group">
+          <label>IMC:</label>
+          <input type="number" id="imc" min="0" step="0.1">
+        </div>
+
+        <div class="form-group">
+          <label>Fumante:</label>
+          <select id="fumante">
+            <option value="Nunca fumou">Nunca fumou</option>
+            <option value="Fumou">Fumou</option>
+            <option value="Fuma">Fuma</option>
+            <option value="Desconhecido">Desconhecido</option>
+          </select>
+        </div>
+
+        <button type="button" onclick="enviarDados()">Enviar</button>
+      </form>
+    </div>
+
+    <!-- Resultado à Direita -->
+    <div class="resultado">
+      <h2>Resultado</h2>
+      <div id="resultado">Aguardando dados...</div>
+    </div>
+  </div>
+
+  <script>
+    function enviarDados() {
+      var dados = {
+        genero: document.querySelector('input[name="genero"]:checked').value,
+        idade: parseInt(document.getElementById("idade").value),
+        hipertensao: parseInt(document.querySelector('input[name="hipertensao"]:checked').value),
+        doenca_cardiaca: parseInt(document.querySelector('input[name="doenca_cardiaca"]:checked').value),
+        casado: document.querySelector('input[name="casado"]:checked').value,
+        tipo_trabalho: document.getElementById("tipo_trabalho").value,
+        tipo_residencia: document.getElementById("tipo_residencia").value,
+        glicose: parseFloat(document.getElementById("glicose").value),
+        imc: parseFloat(document.getElementById("imc").value),
+        fumante: document.getElementById("fumante").value
+      };
+
+      console.log("Dados enviados para a API:", dados);
+
+      fetch("https://api-avc.onrender.com/predict", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(dados)
+      })
+      .then(response => response.json())
+      .then(data => {
+        console.log("Resposta da API:", data);
+
+        // Substitui quebras de linha por <br> na string de recomendação
+        const recomendacaoFormatada = data.recomendacao.replace(/(\r\n|\n|\r)/gm, "<br><br>");
+
+        document.getElementById("resultado").innerHTML =
+          "<b>Possibilidade de AVC:</b> " + data.predicao + "<br><br>" +
+          "<b>Recomendações:</b><br><br>" + recomendacaoFormatada;
+      })
+      .catch(error => {
+        document.getElementById("resultado").innerHTML = "Erro ao processar a requisição.";
+        console.error("Erro na requisição:", error);
+      });
+    }
+  </script>
+</body>
+</html>
